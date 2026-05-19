@@ -60,13 +60,13 @@ async function buildAll() {
     logLevel: "info",
   });
 
-  console.log("building api/index.cjs for Vercel...");
+  console.log("building api/index.js for Vercel...");
   await esbuild({
     entryPoints: ["server/vercel.ts"],
     platform: "node",
     bundle: true,
-    format: "cjs",          // explicit CJS — works regardless of package.json "type"
-    outfile: "api/index.cjs",
+    format: "esm",          // ESM — compatible with package.json "type":"module"
+    outfile: "api/index.js",
     external: allDeps,      // keep node_modules external, Vercel installs them
     logLevel: "info",
   });

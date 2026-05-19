@@ -1,47 +1,19 @@
-"use strict";
-var __create = Object.create;
 var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // server/vercel.ts
-var vercel_exports = {};
-__export(vercel_exports, {
-  default: () => vercel_default
-});
-module.exports = __toCommonJS(vercel_exports);
-var import_express = __toESM(require("express"), 1);
-var import_http = require("http");
+import express from "express";
+import { createServer } from "http";
 
 // server/storage.ts
-var import_drizzle_orm2 = require("drizzle-orm");
+import { eq, and } from "drizzle-orm";
 
 // server/db.ts
-var import_serverless = require("@neondatabase/serverless");
-var import_neon_http = require("drizzle-orm/neon-http");
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
 
 // shared/schema.ts
 var schema_exports = {};
@@ -59,110 +31,110 @@ __export(schema_exports, {
   promoCodes: () => promoCodes,
   users: () => users
 });
-var import_drizzle_orm = require("drizzle-orm");
-var import_pg_core = require("drizzle-orm/pg-core");
-var import_drizzle_zod = require("drizzle-zod");
-var users = (0, import_pg_core.pgTable)("users", {
-  id: (0, import_pg_core.varchar)("id").primaryKey().default(import_drizzle_orm.sql`gen_random_uuid()`),
-  username: (0, import_pg_core.text)("username").notNull().unique(),
-  password: (0, import_pg_core.text)("password").notNull()
+import { sql } from "drizzle-orm";
+import { pgTable, text, varchar, integer, boolean, jsonb, timestamp, serial } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+var users = pgTable("users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull()
 });
-var products = (0, import_pg_core.pgTable)("products", {
-  id: (0, import_pg_core.varchar)("id", { length: 100 }).primaryKey(),
-  name: (0, import_pg_core.text)("name").notNull(),
-  price: (0, import_pg_core.integer)("price").notNull(),
-  oldPrice: (0, import_pg_core.integer)("old_price"),
-  monthlyPrice: (0, import_pg_core.integer)("monthly_price"),
-  brand: (0, import_pg_core.text)("brand").notNull(),
-  category: (0, import_pg_core.text)("category").notNull().default("smartphone"),
-  imageKey: (0, import_pg_core.text)("image_key").notNull(),
-  memory: (0, import_pg_core.text)("memory"),
-  ram: (0, import_pg_core.text)("ram"),
-  color: (0, import_pg_core.text)("color"),
-  sim: (0, import_pg_core.text)("sim"),
-  rating: (0, import_pg_core.integer)("rating"),
-  reviews: (0, import_pg_core.integer)("reviews"),
-  sku: (0, import_pg_core.text)("sku"),
-  inStock: (0, import_pg_core.boolean)("in_stock").notNull().default(true),
-  isPreOrder: (0, import_pg_core.boolean)("is_pre_order").notNull().default(false),
-  badges: (0, import_pg_core.jsonb)("badges").$type().default([]),
-  gift: (0, import_pg_core.jsonb)("gift").$type(),
-  discount: (0, import_pg_core.text)("discount"),
-  colors: (0, import_pg_core.jsonb)("colors").$type().default([]),
-  storage: (0, import_pg_core.jsonb)("storage_options").$type().default([]),
-  specs: (0, import_pg_core.jsonb)("specs").$type().default({}),
-  description: (0, import_pg_core.text)("description")
+var products = pgTable("products", {
+  id: varchar("id", { length: 100 }).primaryKey(),
+  name: text("name").notNull(),
+  price: integer("price").notNull(),
+  oldPrice: integer("old_price"),
+  monthlyPrice: integer("monthly_price"),
+  brand: text("brand").notNull(),
+  category: text("category").notNull().default("smartphone"),
+  imageKey: text("image_key").notNull(),
+  memory: text("memory"),
+  ram: text("ram"),
+  color: text("color"),
+  sim: text("sim"),
+  rating: integer("rating"),
+  reviews: integer("reviews"),
+  sku: text("sku"),
+  inStock: boolean("in_stock").notNull().default(true),
+  isPreOrder: boolean("is_pre_order").notNull().default(false),
+  badges: jsonb("badges").$type().default([]),
+  gift: jsonb("gift").$type(),
+  discount: text("discount"),
+  colors: jsonb("colors").$type().default([]),
+  storage: jsonb("storage_options").$type().default([]),
+  specs: jsonb("specs").$type().default({}),
+  description: text("description")
 });
-var featuredNumbers = (0, import_pg_core.pgTable)("featured_numbers", {
-  id: (0, import_pg_core.serial)("id").primaryKey(),
-  type: (0, import_pg_core.text)("type").notNull(),
-  number: (0, import_pg_core.text)("number").notNull(),
-  price: (0, import_pg_core.integer)("price").notNull(),
-  oldPrice: (0, import_pg_core.integer)("old_price"),
-  discount: (0, import_pg_core.integer)("discount")
+var featuredNumbers = pgTable("featured_numbers", {
+  id: serial("id").primaryKey(),
+  type: text("type").notNull(),
+  number: text("number").notNull(),
+  price: integer("price").notNull(),
+  oldPrice: integer("old_price"),
+  discount: integer("discount")
 });
-var promoCodes = (0, import_pg_core.pgTable)("promo_codes", {
-  id: (0, import_pg_core.serial)("id").primaryKey(),
-  code: (0, import_pg_core.text)("code").notNull().unique(),
-  discountPercent: (0, import_pg_core.integer)("discount_percent").notNull(),
-  fullPaymentOnly: (0, import_pg_core.boolean)("full_payment_only").notNull().default(false),
-  active: (0, import_pg_core.boolean)("active").notNull().default(true)
+var promoCodes = pgTable("promo_codes", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  discountPercent: integer("discount_percent").notNull(),
+  fullPaymentOnly: boolean("full_payment_only").notNull().default(false),
+  active: boolean("active").notNull().default(true)
 });
-var orders = (0, import_pg_core.pgTable)("orders", {
-  id: (0, import_pg_core.varchar)("id").primaryKey().default(import_drizzle_orm.sql`gen_random_uuid()`),
-  customerName: (0, import_pg_core.text)("customer_name").notNull(),
-  phone: (0, import_pg_core.text)("phone").notNull(),
-  email: (0, import_pg_core.text)("email").notNull(),
-  deliveryMethod: (0, import_pg_core.text)("delivery_method").notNull(),
-  address: (0, import_pg_core.text)("address"),
-  region: (0, import_pg_core.text)("region"),
-  district: (0, import_pg_core.text)("district"),
-  store: (0, import_pg_core.text)("store"),
-  paymentType: (0, import_pg_core.text)("payment_type").notNull(),
-  paymentMethod: (0, import_pg_core.text)("payment_method"),
-  bank: (0, import_pg_core.text)("bank"),
-  promoCode: (0, import_pg_core.text)("promo_code"),
-  discountAmount: (0, import_pg_core.integer)("discount_amount").default(0),
-  subtotal: (0, import_pg_core.integer)("subtotal").notNull(),
-  total: (0, import_pg_core.integer)("total").notNull(),
-  items: (0, import_pg_core.jsonb)("items").$type().notNull(),
-  status: (0, import_pg_core.text)("status").notNull().default("pending"),
-  createdAt: (0, import_pg_core.timestamp)("created_at").defaultNow()
+var orders = pgTable("orders", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  customerName: text("customer_name").notNull(),
+  phone: text("phone").notNull(),
+  email: text("email").notNull(),
+  deliveryMethod: text("delivery_method").notNull(),
+  address: text("address"),
+  region: text("region"),
+  district: text("district"),
+  store: text("store"),
+  paymentType: text("payment_type").notNull(),
+  paymentMethod: text("payment_method"),
+  bank: text("bank"),
+  promoCode: text("promo_code"),
+  discountAmount: integer("discount_amount").default(0),
+  subtotal: integer("subtotal").notNull(),
+  total: integer("total").notNull(),
+  items: jsonb("items").$type().notNull(),
+  status: text("status").notNull().default("pending"),
+  createdAt: timestamp("created_at").defaultNow()
 });
-var cartItems = (0, import_pg_core.pgTable)("cart_items", {
-  id: (0, import_pg_core.serial)("id").primaryKey(),
-  sessionId: (0, import_pg_core.text)("session_id").notNull(),
-  productId: (0, import_pg_core.varchar)("product_id", { length: 100 }).notNull(),
-  quantity: (0, import_pg_core.integer)("quantity").notNull().default(1),
-  selectedColor: (0, import_pg_core.text)("selected_color"),
-  selectedStorage: (0, import_pg_core.text)("selected_storage"),
-  selectedGiftId: (0, import_pg_core.text)("selected_gift_id")
+var cartItems = pgTable("cart_items", {
+  id: serial("id").primaryKey(),
+  sessionId: text("session_id").notNull(),
+  productId: varchar("product_id", { length: 100 }).notNull(),
+  quantity: integer("quantity").notNull().default(1),
+  selectedColor: text("selected_color"),
+  selectedStorage: text("selected_storage"),
+  selectedGiftId: text("selected_gift_id")
 });
-var insertUserSchema = (0, import_drizzle_zod.createInsertSchema)(users).pick({
+var insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true
 });
-var insertProductSchema = (0, import_drizzle_zod.createInsertSchema)(products).omit({ id: true });
-var insertOrderSchema = (0, import_drizzle_zod.createInsertSchema)(orders).omit({ id: true, createdAt: true, status: true });
-var insertCartItemSchema = (0, import_drizzle_zod.createInsertSchema)(cartItems).omit({ id: true });
-var insertPromoCodeSchema = (0, import_drizzle_zod.createInsertSchema)(promoCodes).omit({ id: true });
-var insertFeaturedNumberSchema = (0, import_drizzle_zod.createInsertSchema)(featuredNumbers).omit({ id: true });
+var insertProductSchema = createInsertSchema(products).omit({ id: true });
+var insertOrderSchema = createInsertSchema(orders).omit({ id: true, createdAt: true, status: true });
+var insertCartItemSchema = createInsertSchema(cartItems).omit({ id: true });
+var insertPromoCodeSchema = createInsertSchema(promoCodes).omit({ id: true });
+var insertFeaturedNumberSchema = createInsertSchema(featuredNumbers).omit({ id: true });
 
 // server/db.ts
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL must be set. Did you forget to provision a database?");
 }
-var sql2 = (0, import_serverless.neon)(process.env.DATABASE_URL);
-var db = (0, import_neon_http.drizzle)(sql2, { schema: schema_exports });
+var sql2 = neon(process.env.DATABASE_URL);
+var db = drizzle(sql2, { schema: schema_exports });
 
 // server/storage.ts
 var DatabaseStorage = class {
   async getUser(id) {
-    const [user] = await db.select().from(users).where((0, import_drizzle_orm2.eq)(users.id, id));
+    const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
   }
   async getUserByUsername(username) {
-    const [user] = await db.select().from(users).where((0, import_drizzle_orm2.eq)(users.username, username));
+    const [user] = await db.select().from(users).where(eq(users.username, username));
     return user;
   }
   async createUser(insertUser) {
@@ -171,19 +143,19 @@ var DatabaseStorage = class {
   }
   async getProducts(category) {
     if (category) {
-      return db.select().from(products).where((0, import_drizzle_orm2.eq)(products.category, category));
+      return db.select().from(products).where(eq(products.category, category));
     }
     return db.select().from(products);
   }
   async getProductById(id) {
-    const [product] = await db.select().from(products).where((0, import_drizzle_orm2.eq)(products.id, id));
+    const [product] = await db.select().from(products).where(eq(products.id, id));
     return product;
   }
   async getFeaturedNumbers() {
     return db.select().from(featuredNumbers);
   }
   async validatePromoCode(code) {
-    const [promo] = await db.select().from(promoCodes).where((0, import_drizzle_orm2.and)((0, import_drizzle_orm2.eq)(promoCodes.code, code), (0, import_drizzle_orm2.eq)(promoCodes.active, true)));
+    const [promo] = await db.select().from(promoCodes).where(and(eq(promoCodes.code, code), eq(promoCodes.active, true)));
     return promo;
   }
   async createOrder(order) {
@@ -191,43 +163,43 @@ var DatabaseStorage = class {
     return created;
   }
   async getOrderById(id) {
-    const [order] = await db.select().from(orders).where((0, import_drizzle_orm2.eq)(orders.id, id));
+    const [order] = await db.select().from(orders).where(eq(orders.id, id));
     return order;
   }
   async getCartItems(sessionId) {
-    return db.select().from(cartItems).where((0, import_drizzle_orm2.eq)(cartItems.sessionId, sessionId));
+    return db.select().from(cartItems).where(eq(cartItems.sessionId, sessionId));
   }
   async addCartItem(item) {
-    const existing = await db.select().from(cartItems).where((0, import_drizzle_orm2.and)(
-      (0, import_drizzle_orm2.eq)(cartItems.sessionId, item.sessionId),
-      (0, import_drizzle_orm2.eq)(cartItems.productId, item.productId)
+    const existing = await db.select().from(cartItems).where(and(
+      eq(cartItems.sessionId, item.sessionId),
+      eq(cartItems.productId, item.productId)
     ));
     if (existing.length > 0) {
-      const [updated] = await db.update(cartItems).set({ quantity: existing[0].quantity + (item.quantity || 1) }).where((0, import_drizzle_orm2.eq)(cartItems.id, existing[0].id)).returning();
+      const [updated] = await db.update(cartItems).set({ quantity: existing[0].quantity + (item.quantity || 1) }).where(eq(cartItems.id, existing[0].id)).returning();
       return updated;
     }
     const [created] = await db.insert(cartItems).values(item).returning();
     return created;
   }
   async updateCartItemQuantity(id, quantity) {
-    const [updated] = await db.update(cartItems).set({ quantity }).where((0, import_drizzle_orm2.eq)(cartItems.id, id)).returning();
+    const [updated] = await db.update(cartItems).set({ quantity }).where(eq(cartItems.id, id)).returning();
     return updated;
   }
   async updateCartItem(id, updates) {
-    const [updated] = await db.update(cartItems).set(updates).where((0, import_drizzle_orm2.eq)(cartItems.id, id)).returning();
+    const [updated] = await db.update(cartItems).set(updates).where(eq(cartItems.id, id)).returning();
     return updated;
   }
   async removeCartItem(id, sessionId) {
-    await db.delete(cartItems).where((0, import_drizzle_orm2.and)((0, import_drizzle_orm2.eq)(cartItems.id, id), (0, import_drizzle_orm2.eq)(cartItems.sessionId, sessionId)));
+    await db.delete(cartItems).where(and(eq(cartItems.id, id), eq(cartItems.sessionId, sessionId)));
   }
   async clearCart(sessionId) {
-    await db.delete(cartItems).where((0, import_drizzle_orm2.eq)(cartItems.sessionId, sessionId));
+    await db.delete(cartItems).where(eq(cartItems.sessionId, sessionId));
   }
 };
 var storage = new DatabaseStorage();
 
 // server/routes.ts
-var import_zod = require("zod");
+import { z } from "zod";
 async function registerRoutes(httpServer2, app2) {
   app2.get("/api/products", async (req, res) => {
     try {
@@ -291,7 +263,7 @@ async function registerRoutes(httpServer2, app2) {
       const item = await storage.addCartItem(parsed);
       res.status(201).json(item);
     } catch (error) {
-      if (error instanceof import_zod.z.ZodError) {
+      if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid cart item data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to add to cart" });
@@ -345,7 +317,7 @@ async function registerRoutes(httpServer2, app2) {
       await storage.clearCart(sessionId);
       res.status(201).json(order);
     } catch (error) {
-      if (error instanceof import_zod.z.ZodError) {
+      if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid order data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create order" });
@@ -689,14 +661,14 @@ async function seedDatabase() {
 }
 
 // server/vercel.ts
-var app = (0, import_express.default)();
-app.use(import_express.default.json({
+var app = express();
+app.use(express.json({
   verify: (req, _res, buf) => {
     req.rawBody = buf;
   }
 }));
-app.use(import_express.default.urlencoded({ extended: false }));
-var httpServer = (0, import_http.createServer)(app);
+app.use(express.urlencoded({ extended: false }));
+var httpServer = createServer(app);
 registerRoutes(httpServer, app);
 seedDatabase().catch(console.error);
 app.use((err, _req, res, _next) => {
@@ -705,3 +677,6 @@ app.use((err, _req, res, _next) => {
   res.status(status).json({ message });
 });
 var vercel_default = app;
+export {
+  vercel_default as default
+};
