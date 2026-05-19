@@ -60,6 +60,16 @@ async function buildAll() {
     logLevel: "info",
   });
 
+  console.log("building api/index.cjs for Vercel...");
+  await esbuild({
+    entryPoints: ["server/vercel.ts"],
+    platform: "node",
+    bundle: true,
+    format: "cjs",          // explicit CJS — works regardless of package.json "type"
+    outfile: "api/index.cjs",
+    external: allDeps,      // keep node_modules external, Vercel installs them
+    logLevel: "info",
+  });
 }
 
 buildAll().catch((err) => {
