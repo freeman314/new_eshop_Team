@@ -207,7 +207,8 @@ async function registerRoutes(httpServer2, app2) {
       const products2 = await storage.getProducts(category);
       res.json(products2);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch products" });
+      console.error("GET /api/products error:", error?.message, error?.stack);
+      res.status(500).json({ message: "Failed to fetch products", error: error?.message });
     }
   });
   app2.get("/api/products/:id", async (req, res) => {

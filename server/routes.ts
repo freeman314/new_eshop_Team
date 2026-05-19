@@ -14,8 +14,9 @@ export async function registerRoutes(
       const category = req.query.category as string | undefined;
       const products = await storage.getProducts(category);
       res.json(products);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch products" });
+    } catch (error: any) {
+      console.error("GET /api/products error:", error?.message, error?.stack);
+      res.status(500).json({ message: "Failed to fetch products", error: error?.message });
     }
   });
 
