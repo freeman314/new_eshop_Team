@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { products, featuredNumbers, promoCodes } from "@shared/schema";
+import { products, featuredNumbers, promoCodes } from "../shared/schema";
 
 export async function seedDatabase() {
   const existingProducts = await db.select().from(products);

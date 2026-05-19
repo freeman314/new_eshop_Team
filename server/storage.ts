@@ -7,7 +7,7 @@ import {
   type Order, type InsertOrder,
   type CartItem, type InsertCartItem,
   type PromoCode, type FeaturedNumber,
-} from "@shared/schema";
+} from "../shared/schema";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
