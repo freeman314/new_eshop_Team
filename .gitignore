@@ -5,6 +5,7 @@ node_modules/
 # Build output
 dist/
 build/
+api/index.js
 
 # Environment variables
 .env
@@ -32,3 +33,5 @@ Thumbs.db
 .replit
 .config/
 .cache/
+.vercel
+.env*.local
